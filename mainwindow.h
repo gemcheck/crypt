@@ -29,11 +29,14 @@ public:
     bool readJSON(const QByteArray &aes256_key);
     void onFilterTextChanged(const QString &text);
 
+private slots:
+    void on_edtPin_returnPressed();
+
 private:
     Ui::MainWindow *ui;
     int decryptFile(const QByteArray &aes256_key, const QByteArray & encryptedBytes, QByteArray & deccryptedBytes);
     QJsonArray m_jsonarray; //структура данных, содержащая учетные записи
-    void on_edtPin_returnPressed();
+    int m_isStartup = 1;
 };
 
 

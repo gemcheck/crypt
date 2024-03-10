@@ -15,24 +15,24 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->lineEdit, &QLineEdit::textChanged, this, &MainWindow::onFilterTextChanged);
 
-    for(int i = 0; i < m_jsonarray.size(); i++){
-        qDebug() << "*** m_jsonarray{[" << i << "] = " << m_jsonarray[i];
+    // for(int i = 0; i < m_jsonarray.size(); i++){
+    //     qDebug() << "*** m_jsonarray{[" << i << "] = " << m_jsonarray[i];
 
-        QListWidgetItem * newItem = new QListWidgetItem();
-        // if(m_jsonarray[i].isObject()){ // есть ли поле site
-        //     if(m_jsonarray[i].toObject().contains("site")){
-        //         if(m_jsonarray[i].toObject()["site"].isString()) {
-        //             qDebug() << m_jsonarray[i];
-        //         }
-        //     }
-        // }
-        CredentialWidget * itemWidget =
-            new CredentialWidget(m_jsonarray[i].toObject()["site"].toString());
-        newItem->setSizeHint(itemWidget->sizeHint());
-        // newItem->setSizeHint(itemWidget->sizeHint());
-        ui->listWidget->addItem(newItem);
-        ui->listWidget->setItemWidget(newItem, itemWidget);
-    }
+    //     QListWidgetItem * newItem = new QListWidgetItem();
+    //     // if(m_jsonarray[i].isObject()){ // есть ли поле site
+    //     //     if(m_jsonarray[i].toObject().contains("site")){
+    //     //         if(m_jsonarray[i].toObject()["site"].isString()) {
+    //     //             qDebug() << m_jsonarray[i];
+    //     //         }
+    //     //     }
+    //     // }
+    //     CredentialWidget * itemWidget =
+    //         new CredentialWidget(m_jsonarray[i].toObject()["site"].toString(), i);
+    //     newItem->setSizeHint(itemWidget->sizeHint());
+    //     // newItem->setSizeHint(itemWidget->sizeHint());
+    //     ui->listWidget->addItem(newItem);
+    //     ui->listWidget->setItemWidget(newItem, itemWidget);
+    // }
 }
 
 void MainWindow::onFilterTextChanged(const QString &text)
@@ -43,12 +43,19 @@ void MainWindow::onFilterTextChanged(const QString &text)
     // фильтр к m_jsonarray и добавление отфильтрованных элементы в QListWidget
     for (int i = 0; i < m_jsonarray.size(); i++) {
         QString site = m_jsonarray[i].toObject()["site"].toString().toLower();
+        qDebug() << "\n" << 1 << "\n";
         if (site.contains(text.toLower())) {
+            qDebug() << "\n" << 2 << site << "\n";
             QListWidgetItem *newItem = new QListWidgetItem();
-            CredentialWidget *itemWidget = new CredentialWidget(site);
+            qDebug() << "\n" << 3 << site << "\n";
+            // поломка в следующей строчке
+            CredentialWidget *itemWidget = new CredentialWidget(site, i);
+            //
+            qDebug() << "\n" << 4 << site << "\n";
             newItem->setSizeHint(itemWidget->sizeHint());
             ui->listWidget->addItem(newItem);
             ui->listWidget->setItemWidget(newItem, itemWidget);
+            qDebug() << "\n" << 5 << "\n";
         }
     }
 }
@@ -94,8 +101,8 @@ int MainWindow::decryptFile(
     // HEX(key) = '7b5e5de52aa9fad69f834a1fa4b65dcf96f609579ef701181c22ee47bbc5b294'
     // QByteArray key_qba = QByteArray::fromHex("7b5e5de52aa9fad69f834a1fa4b65dcf96f609579ef701181c22ee47bbc5b294");
     // нужно поставить aes_256 наверх
-
-    QByteArray key_qba = QByteArray::fromHex(aes256_key);
+    qDebug() << "---" << aes256_key.toHex();
+    QByteArray key_qba = QByteArray::fromHex(aes256_key.toHex());
     QByteArray iv_qba = QByteArray::fromHex("f3724fed6a617d5f80493368d4477983");
     unsigned char key[32], iv[16];
     const int bufferLen = 256;
@@ -146,25 +153,26 @@ void MainWindow::on_edtPin_returnPressed()
         ui->edtPin->text().toUtf8(),
         QCryptographicHash::Sha256);
     qDebug() << "*** Sha256 = " << hash.toHex();
-
-    if(readJSON(hash)) {
-        ui->stackedWidget->setCurrentIndex(1);
-        onFilterTextChanged("");
-    }else {
-        ui->lblLogin->setText("Неверный пин");
-        ui->lblLogin->setStyleSheet("color:red;");
+    if(m_isStartup){
+        if(readJSON(hash)) {
+            ui->stackedWidget->setCurrentIndex(1);
+            onFilterTextChanged("");
+            m_isStartup = 0;
+        }else {
+            ui->lblLogin->setText("Неверный пин");
+            ui->lblLogin->setStyleSheet("color:red;");
+        }
     }
-
-    // else {
-    //     QByteArray encrypted_creds = QByteArray::FromHex(
-    //         m_jsonarray[m_current_id].toObject()["logpass"].toString().toUtf8()
-    //         );
-    //     QByteArray decrypted_creds;
-
-    //     decryptFle(hash, encrypted_creds, decrypted_creds);
-    //     QGuiApplication::clipboard() -> setText(QString::fromUtf8(decrypted_creds));
-    //     ui->stackedWidget->setCurrentIndex(1);
-    // }
+    else {
+        // QByteArray encrypted_creds = QByteArray::fromHex(
+        //     m_jsonarray[m_current_id].toObject()["logpass"].toString().toUtf8()
+        //     );
+        // QByteArray decrypted_creds;
+        qDebug() << "Приложение уже запущено";
+        // decryptFile(hash, encrypted_creds, decrypted_creds);
+        // QGuiApplication::clipboard() -> setText(QString::fromUtf8(decrypted_creds));
+        // ui->stackedWidget->setCurrentIndex(1);
+    }
 
 
     ui->edtPin->setText(QString().fill('*', ui->edtPin->text().size()));

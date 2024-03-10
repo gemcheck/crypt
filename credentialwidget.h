@@ -12,9 +12,9 @@ class CredentialWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit CredentialWidget(const QString&site,
-                              const int id,
-                              QWidget *parent = nullptr);
+    explicit CredentialWidget(const QString&site
+                              , const int id
+                              , QWidget *parent = nullptr);
     ~CredentialWidget();
 
 private slots:
