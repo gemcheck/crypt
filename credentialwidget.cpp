@@ -20,12 +20,14 @@ CredentialWidget::~CredentialWidget()
 void CredentialWidget::on_loginbutton_clicked()
 {
     qDebug() << "*** Pressed login" << m_id;
-    emit decryptLogin(m_id);
+    isPass = 0;
+    emit decryptLoginPassword(m_id, isPass);
 }
 
 
 void CredentialWidget::on_pushButton_clicked()
 {
     qDebug() << "*** Pressed password" << m_id;
-    emit decryptPassword(m_id);
+    isPass = 1;
+    emit decryptLoginPassword(m_id, isPass);
 }

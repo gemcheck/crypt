@@ -23,12 +23,12 @@ private slots:
     void on_pushButton_clicked();
 
 signals:
-    void decryptLogin(int id);
-    void decryptPassword(int id);
+    void decryptLoginPassword(int m_id, int isPass);
 
 private:
     Ui::CredentialWidget *ui;
     int m_id = -1;
+    int isPass = -1;
 };
 
 #endif // CREDENTIALWIDGET_H

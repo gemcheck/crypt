@@ -29,14 +29,22 @@ public:
     bool readJSON(const QByteArray &aes256_key);
     void onFilterTextChanged(const QString &text);
 
+public slots:
+    void on_decryptLoginPassword(int id, int isPass);
+
 private slots:
     void on_edtPin_returnPressed();
 
 private:
     Ui::MainWindow *ui;
-    int decryptFile(const QByteArray &aes256_key, const QByteArray & encryptedBytes, QByteArray & deccryptedBytes);
+    int decryptFile(const QByteArray &aes256_key
+                    , const QByteArray & encryptedBytes
+                    , QByteArray & deccryptedBytes);
     QJsonArray m_jsonarray; //структура данных, содержащая учетные записи
     int m_isStartup = 1;
+    int m_isPass = -1;
+    int m_current_id = -1;    //структура данных содержащая учетные записи
+
 };
 
 
