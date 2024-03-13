@@ -8,7 +8,7 @@ CredentialWidget::CredentialWidget(const QString &site
     , ui(new Ui::CredentialWidget)
     , m_id(id)
 {
-    //ui->setupUi(this);
+    ui->setupUi(this);
     ui->lblSite->setText(site);
 }
 
@@ -19,13 +19,13 @@ CredentialWidget::~CredentialWidget()
 
 void CredentialWidget::on_loginbutton_clicked()
 {
-    qDebug() << "*** Pressed" << m_id;
+    qDebug() << "*** Pressed login" << m_id;
     emit decryptLogin(m_id);
 }
 
 
 void CredentialWidget::on_pushButton_clicked()
 {
-    qDebug() << "*** Pressed" << m_id;
+    qDebug() << "*** Pressed password" << m_id;
     emit decryptPassword(m_id);
 }
