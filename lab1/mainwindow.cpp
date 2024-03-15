@@ -19,10 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::onFilterTextChanged(const QString &text)
 {
-    // Очистка QListWidget перед применением фильтра
     ui->listWidget->clear();
 
-    // фильтр к m_jsonarray и добавление отфильтрованных элементы в QListWidget
     for (int i = 0; i < m_jsonarray.size(); i++) {
         QString site = m_jsonarray[i].toObject()["site"].toString().toLower();
         //qDebug() << "\n" << 1 << "\n";
@@ -82,8 +80,6 @@ int MainWindow::decryptFile(
 {
     // HEX(iv) = 'f3724fed6a617d5f80493368d4477983'
     // HEX(key) = '7b5e5de52aa9fad69f834a1fa4b65dcf96f609579ef701181c22ee47bbc5b294'
-    // QByteArray key_qba = QByteArray::fromHex("7b5e5de52aa9fad69f834a1fa4b65dcf96f609579ef701181c22ee47bbc5b294");
-    // нужно поставить aes_256 наверх
     qDebug() << "---" << aes256_key.toHex();
     QByteArray key_qba = QByteArray::fromHex(aes256_key.toHex());
     QByteArray iv_qba = QByteArray::fromHex("f3724fed6a617d5f80493368d4477983");
